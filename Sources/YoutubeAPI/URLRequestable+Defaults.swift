@@ -9,23 +9,24 @@ import WebService
 
 extension URLRequestable {
     public var apiBaseURLString: String {
-        "https://www.googleapis.com/youtube/\(YoutubeAPI.youtubeDataAPIVersion)/"
+        "https://www.googleapis.com/youtube/\(YoutubeAPI.youtubeDataAPIVersion)"
     }
 
     public var headers: HTTPHeaders {
         HTTPHeaders()
+            .add(.accept(URLRequest.ContentType.json))
     }
 
     public var body: Data? {
-        return nil
+        nil
     }
-
+    
     public var queryItems: [URLQueryItem]? {
-        return nil
+        nil
     }
 
     public var isAuthorizedRequest: Bool {
-        return false
+        false
     }
 
     public var authorizationHeader: HTTPHeader? {
@@ -54,13 +55,16 @@ extension URLRequestable {
         let request = URLRequest(url: url)
             .setMethod(method)
             .setHeaders(headers?.headers ?? [])
+            .addHeaders(self.headers)
             .setHttpBody(body, contentType: URLRequest.ContentType.json)
         return request
     }
 
     public var transformer: YoutubeAPI.Transformer<Response> {
         { result in
-            try JSONDecoder().decode(Response.self, from: result.data)
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            return try decoder.decode(Response.self, from: result.data)
         }
     }
 }

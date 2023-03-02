@@ -8,6 +8,7 @@ import Foundation
 import WebService
 import YoutubeModel
 
+/// https://developers.google.com/youtube/v3/docs/videos/list
 public struct VideosRequest: URLRequestable {
     public typealias Response = Videos
 

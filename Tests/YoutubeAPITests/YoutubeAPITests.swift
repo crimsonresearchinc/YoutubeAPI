@@ -1,5 +1,6 @@
 import XCTest
 @testable import YoutubeAPI
+import WebServiceURLMock
 
 final class YoutubeAPITests: XCTestCase {
     func testBool() throws {

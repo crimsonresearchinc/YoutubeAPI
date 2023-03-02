@@ -25,7 +25,8 @@ let package = Package(
                                                .product(name: "WebServiceCombine", package: "WebService"),
                                                .product(name: "WebServiceConcurrency", package: "WebService")],
             plugins: [.plugin(name: "SwiftLint", package: "SwiftLintPlugin")]),
-        .testTarget(
-            name: "YoutubeAPITests", dependencies: ["YoutubeAPI"]),
+        .testTarget(name: "YoutubeAPITests", dependencies: ["YoutubeAPI",
+                                                            .product(name: "WebServiceURLMock", package: "WebService")],
+                    resources: [.copy("TestData")]),
     ]
 )
