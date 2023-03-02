@@ -35,7 +35,7 @@ extension URLRequestable {
         return HTTPHeader.authorization(token: "")
     }
 
-    public func url(queryItems: [URLQueryItem]?) throws -> URL {
+    public func url(queryItems: [URLQueryItem]? = nil) throws -> URL {
         guard var components = URLComponents(string: apiBaseURLString) else {
             throw URLError(.badURL)
         }
@@ -49,7 +49,7 @@ extension URLRequestable {
         return url
     }
 
-    public func urlRequest(headers: HTTPHeaders?, queryItems: [URLQueryItem]?) throws -> URLRequest {
+    public func urlRequest(headers: HTTPHeaders? = nil, queryItems: [URLQueryItem]? = nil) throws -> URLRequest {
         let url = try url(queryItems: queryItems)
         let request = URLRequest(url: url)
             .setMethod(method)
