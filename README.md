@@ -1,2 +1,3 @@
 # YoutubeAPI
-REST API to connect o Youtube
+
+A description of this package.
