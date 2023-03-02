@@ -57,4 +57,10 @@ extension URLRequestable {
             .setHttpBody(body, contentType: URLRequest.ContentType.json)
         return request
     }
+
+    public var transformer: YoutubeAPI.Transformer<Response> {
+        { result in
+            try JSONDecoder().decode(Response.self, from: result.data)
+        }
+    }
 }

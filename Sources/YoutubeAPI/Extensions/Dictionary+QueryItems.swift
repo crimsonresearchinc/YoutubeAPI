@@ -12,7 +12,7 @@ extension Dictionary where Key == String, Value == Any {
             self[key] = value
         }
     }
-    
+
     mutating func appendingQueryParameter<T: RawRepresentable>(key: String, value: T?) where T.RawValue == String {
         if let value = value {
             self[key] = value.rawValue

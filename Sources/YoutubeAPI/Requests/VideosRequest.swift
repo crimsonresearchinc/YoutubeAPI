@@ -6,8 +6,11 @@
 
 import Foundation
 import WebService
+import YoutubeModel
 
 public struct VideosRequest: URLRequestable {
+    public typealias Response = Videos
+
     public var method: HTTPMethod {
         .GET
     }
