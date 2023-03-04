@@ -6,6 +6,7 @@
 
 import Foundation
 import WebService
+import YoutubeModel
 
 extension URLRequestable {
     public var apiBaseURLString: String {
@@ -20,9 +21,9 @@ extension URLRequestable {
     public var body: Data? {
         nil
     }
-    
+
     public var queryItems: [URLQueryItem]? {
-        [URLQueryItem(name: "key", value: "")] // API_KEY
+        nil
     }
 
     public var isAuthorizedRequest: Bool {
@@ -30,10 +31,7 @@ extension URLRequestable {
     }
 
     public var authorizationHeader: HTTPHeader? {
-        guard isAuthorizedRequest else {
-            return nil
-        }
-        return HTTPHeader.authorization(token: "") // ACCESS_TOKEN
+        nil
     }
 
     public func url(queryItems: [URLQueryItem]? = nil) throws -> URL {
@@ -62,7 +60,28 @@ extension URLRequestable {
 
     public var transformer: YoutubeAPI.Transformer<Response> {
         { result in
+            guard let httpResponse = result.response as? HTTPURLResponse else {
+                throw URLError(.badServerResponse)
+            }
+            
             let decoder = JSONDecoder()
+            // Check valid response code
+            let acceptableStatusCodes: Range<Int> = 200 ..< 300
+            guard acceptableStatusCodes.contains(httpResponse.statusCode) else {
+                let errorResponse = try decoder.decode(ErrorResponse.self, from: result.data)
+                throw errorResponse.error
+            }
+
+            let acceptableContentTypes = [URLRequest.ContentType.jsonUTF8]
+            if let contentType = httpResponse.allHeaderFields[URLRequest.Header.contentType] as? String {
+                if !acceptableContentTypes.contains(contentType) {
+                    throw URLError(.dataNotAllowed)
+                }
+            } else {
+                throw URLError(.badServerResponse)
+            }
+
+            try result.data.ws_validateNotEmptyData()
             decoder.dateDecodingStrategy = .iso8601
             return try decoder.decode(Response.self, from: result.data)
         }

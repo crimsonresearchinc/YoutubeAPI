@@ -13,8 +13,7 @@ private let api = Logger(subsystem: "com.waqarmalik.YoutubeAPI", category: "Yout
 
 public final class YoutubeAPI {
     public static let youtubeDataAPIVersion = "v3"
-    public private(set) var accessAPIKey: String = ""
-    public private(set) var accessToken: String = ""
+    public var authentication: Authentication?
 
     public typealias Transformer<T> = WebService.DataMapper<WebService.DataResponse, T>
 
@@ -25,24 +24,22 @@ public final class YoutubeAPI {
     }
 
     public func decoded<T: URLRequestable>(route: T, parameters: [String: Any]? = nil, headers: HTTPHeaders? = nil, transformer: Transformer<T.Response>? = nil) async throws -> T.Response {
-        let queryItems = parameters?.compactMap({ (key: String, value: Any) in
+        var queryItems = parameters?.compactMap({ (key: String, value: Any) in
             URLQueryItem(name: key, value: String(describing: value))
         })
-        let request = try route.urlRequest(headers: headers, queryItems: queryItems)
+
+        if let item = authentication?.apiKeyQueryItem, route.isAuthorizedRequest {
+            queryItems?.append(item)
+        }
+
+        var newHeaders = headers
+        if route.isAuthorizedRequest, let header = authentication?.tokenHeader {
+            if newHeaders == nil {
+                newHeaders = HTTPHeaders()
+            }
+            newHeaders?.add(header)
+        }
+        let request = try route.urlRequest(headers: newHeaders, queryItems: queryItems)
         return try await webService.data(for: request, transform: transformer ?? route.transformer)
-    }
-}
-
-extension YoutubeAPI {
-    @discardableResult
-    func set(accessAPIKey: String) -> Self {
-        self.accessAPIKey = accessAPIKey
-        return self
-    }
-
-    @discardableResult
-    func set(accessToken: String) -> Self {
-        self.accessToken = accessToken
-        return self
     }
 }
