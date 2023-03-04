@@ -22,7 +22,7 @@ extension URLRequestable {
     }
     
     public var queryItems: [URLQueryItem]? {
-        nil
+        [URLQueryItem(name: "key", value: "")] // API_KEY
     }
 
     public var isAuthorizedRequest: Bool {
@@ -33,7 +33,7 @@ extension URLRequestable {
         guard isAuthorizedRequest else {
             return nil
         }
-        return HTTPHeader.authorization(token: "")
+        return HTTPHeader.authorization(token: "") // ACCESS_TOKEN
     }
 
     public func url(queryItems: [URLQueryItem]? = nil) throws -> URL {
