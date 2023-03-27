@@ -63,27 +63,26 @@ extension URLRequestable {
             guard let httpResponse = result.response as? HTTPURLResponse else {
                 throw URLError(.badServerResponse)
             }
-            
+
+            let data = try result.data.ws_validateNotEmptyData()
             let decoder = JSONDecoder()
             // Check valid response code
             let acceptableStatusCodes: Range<Int> = 200 ..< 300
             guard acceptableStatusCodes.contains(httpResponse.statusCode) else {
-                let errorResponse = try decoder.decode(ErrorResponse.self, from: result.data)
+                let errorResponse = try decoder.decode(ErrorResponse.self, from: data)
                 throw errorResponse.error
             }
 
-            let acceptableContentTypes = [URLRequest.ContentType.jsonUTF8]
-            if let contentType = httpResponse.allHeaderFields[URLRequest.Header.contentType] as? String {
-                if !acceptableContentTypes.contains(contentType) {
-                    throw URLError(.dataNotAllowed)
-                }
-            } else {
+            guard let contentType = httpResponse.allHeaderFields[URLRequest.Header.contentType] as? String else {
                 throw URLError(.badServerResponse)
             }
+            let acceptableContentTypes: Set<String>  = [URLRequest.ContentType.jsonUTF8, URLRequest.ContentType.json]
+            if !acceptableContentTypes.contains(contentType) {
+                throw URLError(.dataNotAllowed)
+            }
 
-            try result.data.ws_validateNotEmptyData()
             decoder.dateDecodingStrategy = .iso8601
-            return try decoder.decode(Response.self, from: result.data)
+            return try decoder.decode(Response.self, from: data)
         }
     }
 }
