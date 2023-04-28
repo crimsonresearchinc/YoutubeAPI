@@ -13,10 +13,6 @@ import URLRequestable
 public struct VideosRequest: URLRequestable {
     public typealias Response = Videos
 
-    public var method: HTTPMethod {
-        .GET
-    }
-
     public var path: String {
         "/\(youtubeDataAPIVersion)/videos"
     }
