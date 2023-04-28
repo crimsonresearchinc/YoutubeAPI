@@ -1,12 +1,21 @@
 {
   "pins" : [
     {
+      "identity" : "urlrequestable",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/wmalloc/URLRequestable.git",
+      "state" : {
+        "revision" : "750dcb9eec2c53a40d4bf04f2ce976062dab8168",
+        "version" : "0.0.3"
+      }
+    },
+    {
       "identity" : "webservice",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wmalloc/WebService.git",
       "state" : {
-        "revision" : "820d1a3d268af8e235e55b7e946ead7c72b1e463",
-        "version" : "0.6.2"
+        "revision" : "afa823fea88369347a0f531f461861ff13cb35fe",
+        "version" : "0.7.0"
       }
     },
     {

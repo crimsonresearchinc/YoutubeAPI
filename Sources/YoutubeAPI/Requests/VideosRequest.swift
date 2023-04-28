@@ -7,6 +7,7 @@
 import Foundation
 import WebService
 import YoutubeModel
+import URLRequestable
 
 /// https://developers.google.com/youtube/v3/docs/videos/list
 public struct VideosRequest: URLRequestable {
@@ -17,7 +18,7 @@ public struct VideosRequest: URLRequestable {
     }
 
     public var path: String {
-        "/videos"
+        "/\(youtubeDataAPIVersion)/videos"
     }
 
     public var isAuthorizedRequest: Bool {

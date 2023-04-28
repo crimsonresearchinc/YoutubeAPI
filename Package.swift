@@ -13,7 +13,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/wmalloc/YoutubeModel.git", branch: "main"),
-        .package(url: "https://github.com/wmalloc/WebService.git", .upToNextMajor(from: "0.6.1")),
+        .package(url: "https://github.com/wmalloc/WebService.git", .upToNextMajor(from: "0.7.0")),
      ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -24,7 +24,6 @@ let package = Package(
                                                .product(name: "WebServiceCombine", package: "WebService"),
                                                .product(name: "WebServiceConcurrency", package: "WebService")]),
         .testTarget(name: "YoutubeAPITests", dependencies: ["YoutubeAPI",
-                                                            .product(name: "WebServiceURLMock", package: "WebService")],
-                    resources: [.copy("TestData")]),
+                                                            .product(name: "WebServiceURLMock", package: "WebService")]),
     ]
 )

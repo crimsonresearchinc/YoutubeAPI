@@ -7,6 +7,7 @@
 
 import Foundation
 import WebService
+import URLRequestable
 
 extension Authentication {
     var apiKeyQueryItem: URLQueryItem {

@@ -7,23 +7,15 @@
 import Foundation
 import WebService
 import YoutubeModel
+import URLRequestable
 
 extension URLRequestable {
+    public var youtubeDataAPIVersion: String {
+        "v3"
+    }
+    
     public var apiBaseURLString: String {
-        "https://www.googleapis.com/youtube/\(YoutubeAPI.youtubeDataAPIVersion)"
-    }
-
-    public var headers: HTTPHeaders {
-        HTTPHeaders()
-            .add(.accept(URLRequest.ContentType.json))
-    }
-
-    public var body: Data? {
-        nil
-    }
-
-    public var queryItems: [URLQueryItem]? {
-        nil
+        "https://www.googleapis.com/youtube"
     }
 
     public var isAuthorizedRequest: Bool {
@@ -33,38 +25,16 @@ extension URLRequestable {
     public var authorizationHeader: HTTPHeader? {
         nil
     }
+}
 
-    public func url(queryItems: [URLQueryItem]? = nil) throws -> URL {
-        guard var components = URLComponents(string: apiBaseURLString) else {
-            throw URLError(.badURL)
-        }
-        var items = self.queryItems ?? []
-        items.append(contentsOf: queryItems ?? [])
-        components.appendQueryItems(items)
-        components.path = path
-        guard let url = components.url else {
-            throw URLError(.unsupportedURL)
-        }
-        return url
-    }
-
-    public func urlRequest(headers: HTTPHeaders? = nil, queryItems: [URLQueryItem]? = nil) throws -> URLRequest {
-        let url = try url(queryItems: queryItems)
-        let request = URLRequest(url: url)
-            .setMethod(method)
-            .setHeaders(headers?.headers ?? [])
-            .addHeaders(self.headers)
-            .setHttpBody(body, contentType: URLRequest.ContentType.json)
-        return request
-    }
-
-    public var transformer: YoutubeAPI.Transformer<Response> {
+extension URLRequestable where Response: Decodable {
+    public var transformer: ResponseTransformer {
         { result in
             guard let httpResponse = result.response as? HTTPURLResponse else {
                 throw URLError(.badServerResponse)
             }
 
-            let data = try result.data.ws_validateNotEmptyData()
+            let data = try result.data.url_validateNotEmptyData()
             let decoder = JSONDecoder()
             // Check valid response code
             let acceptableStatusCodes: Range<Int> = 200 ..< 300
@@ -73,10 +43,10 @@ extension URLRequestable {
                 throw errorResponse.error
             }
 
-            guard let contentType = httpResponse.allHeaderFields[URLRequest.Header.contentType] as? String else {
+            guard let contentType = httpResponse.allHeaderFields[HTTPHeaderType.contentType] as? String else {
                 throw URLError(.badServerResponse)
             }
-            let acceptableContentTypes: Set<String>  = [URLRequest.ContentType.jsonUTF8, URLRequest.ContentType.json]
+            let acceptableContentTypes: Set<String>  = [.jsonUTF8, .json]
             if !acceptableContentTypes.contains(contentType) {
                 throw URLError(.dataNotAllowed)
             }
