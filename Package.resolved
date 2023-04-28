@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wmalloc/URLRequestable.git",
       "state" : {
-        "revision" : "750dcb9eec2c53a40d4bf04f2ce976062dab8168",
-        "version" : "0.0.3"
+        "revision" : "ed77cb8d5811cc0dd44ab8d2c2619c5cebf5eba9",
+        "version" : "0.0.4"
       }
     },
     {
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wmalloc/WebService.git",
       "state" : {
-        "revision" : "afa823fea88369347a0f531f461861ff13cb35fe",
-        "version" : "0.7.0"
+        "revision" : "e94d617a403295b9432e2d8909ade57b37e5a8b2",
+        "version" : "0.7.2"
       }
     },
     {

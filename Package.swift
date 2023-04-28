@@ -13,7 +13,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/wmalloc/YoutubeModel.git", branch: "main"),
-        .package(url: "https://github.com/wmalloc/WebService.git", .upToNextMajor(from: "0.7.0")),
+        .package(url: "https://github.com/wmalloc/WebService.git", .upToNextMajor(from: "0.7.2")),
      ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
