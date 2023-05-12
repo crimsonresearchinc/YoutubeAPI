@@ -1,33 +1,42 @@
 //
-//  URLRequestable+Defaults.swift
+//  YoutubeAPIRequestable.swift
+//  
 //
-//  Created by Waqar Malik on 3/1/23.
+//  Created by Waqar Malik on 5/11/23.
 //
 
 import Foundation
-import WebService
-import YoutubeModel
 import URLRequestable
+import YoutubeModel
 
-extension URLRequestable {
-    public var youtubeDataAPIVersion: String {
+public protocol YoutubeAPIRequestable: URLRequestable {
+    var apiVersion: String { get }
+    var isAuthorizedRequest: Bool { get }
+}
+
+public extension YoutubeAPIRequestable {
+    var apiVersion: String {
         "v3"
     }
     
-    public var apiBaseURLString: String {
+    var apiBaseURLString: String {
         "https://www.googleapis.com/youtube"
     }
 
-    public var isAuthorizedRequest: Bool {
-        false
+    var isAuthorizedRequest: Bool {
+        true
     }
-
-    public var authorizationHeader: HTTPHeader? {
-        nil
+    
+    static var acceptableStatusCodes: Range<Int> {
+        200 ..< 300
+    }
+    
+    static var acceptableContentTypes: Set<String> {
+        [.jsonUTF8, .json]
     }
 }
 
-extension URLRequestable where Response: Decodable {
+extension YoutubeAPIRequestable where Response: Decodable {
     public var transformer: ResponseTransformer {
         { result in
             guard let httpResponse = result.response as? HTTPURLResponse else {
@@ -37,8 +46,7 @@ extension URLRequestable where Response: Decodable {
             let data = try result.data.url_validateNotEmptyData()
             let decoder = JSONDecoder()
             // Check valid response code
-            let acceptableStatusCodes: Range<Int> = 200 ..< 300
-            guard acceptableStatusCodes.contains(httpResponse.statusCode) else {
+            guard Self.acceptableStatusCodes.contains(httpResponse.statusCode) else {
                 let errorResponse = try decoder.decode(ErrorResponse.self, from: data)
                 throw errorResponse.error
             }
@@ -46,8 +54,7 @@ extension URLRequestable where Response: Decodable {
             guard let contentType = httpResponse.allHeaderFields[HTTPHeaderType.contentType] as? String else {
                 throw URLError(.badServerResponse)
             }
-            let acceptableContentTypes: Set<String>  = [.jsonUTF8, .json]
-            if !acceptableContentTypes.contains(contentType) {
+            if !Self.acceptableContentTypes.contains(contentType) {
                 throw URLError(.dataNotAllowed)
             }
 

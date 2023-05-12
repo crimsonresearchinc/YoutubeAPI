@@ -10,11 +10,11 @@ import YoutubeModel
 import URLRequestable
 
 /// https://developers.google.com/youtube/v3/docs/videos/list
-public struct VideosRequest: URLRequestable {
+public struct VideosRequest: YoutubeAPIRequestable {
     public typealias Response = Videos
 
     public var path: String {
-        "/\(youtubeDataAPIVersion)/videos"
+        "/\(apiVersion)/videos"
     }
 
     public var isAuthorizedRequest: Bool {

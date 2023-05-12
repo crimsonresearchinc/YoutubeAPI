@@ -9,9 +9,9 @@ import WebService
 import os.log
 import URLRequestable
 
-private let api = Logger(subsystem: "com.waqarmalik.YoutubeAPI", category: "YoutubeAPI")
+let api = Logger(subsystem: "com.waqarmalik.YoutubeAPI", category: "YoutubeAPI")
 
-public final class YoutubeAPI: URLRequestAsyncRetrievable {
+public final class YoutubeAPI: URLRequestAsyncTransferable {
     public let session: URLSession
     public var authentication: Authentication?
 
@@ -26,7 +26,8 @@ public final class YoutubeAPI: URLRequestAsyncRetrievable {
         self.session = session
     }
     
-    public func decoded<T: URLRequestable>(route: T, parameters: [String: Any]? = nil, headers: HTTPHeaders? = nil, transformer: T.ResponseTransformer? = nil) async throws -> T.Response {
+    public func decoded<T: YoutubeAPIRequestable>(route: T, parameters: [String: Any]? = nil, headers: HTTPHeaders? = nil, transformer: T.ResponseTransformer? = nil) async throws -> T.Response {
+        api.trace("[IN]: \(route.path), parameters = \(parameters?.description ?? "nil"), headers = \(headers?.description ?? "nil")")
         var queryItems = parameters?.compactMap({ (key: String, value: Any) in
             URLQueryItem(name: key, value: String(describing: value))
         })
@@ -43,6 +44,6 @@ public final class YoutubeAPI: URLRequestAsyncRetrievable {
             newHeaders?.add(header)
         }
         let request = try route.urlRequest(headers: newHeaders?.headers, queryItems: queryItems)
-        return try await data(for: request, transform: transformer ?? route.transformer)
+        return try await data(for: request, transformer: transformer ?? route.transformer)
     }
 }
